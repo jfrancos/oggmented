@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+</head>
+
+<body>
+    HTML page I created for my WebAssembly module.
+
+    <!-- <script>
+            // console.log(Module)
+            const importObject = {
+                env: {
+                    __memory_base: 0
+                }
+            }
+            WebAssembly.instantiateStreaming(fetch("oggdec.wasm"),importObject)
+            .then(result => {
+                const value = result.instance.exports.decode_buffer()
+                // console.log(result.instance.exports.allocateF32Array(23423))
+                // const pointer = result.instance.exports.allocateUInt
+                fetch('BackupAndPush.ogg')
+                .then(response => response.arrayBuffer())
+                .then(response => {
+                    console.log(response)
+                })
+                console.log(value)
+            })
+        </script> -->
+    <script>
+        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        var Module = {
+            onRuntimeInitialized: function () {
+                console.log(Module)
+                fetch('gm.ogg')
+                .then(response => response.arrayBuffer())
+                .then(response => { console.time("Native"); return audioCtx.decodeAudioData(response)})
+                .then(response => {
+                    console.timeEnd("Native")
+                    console.log(response)
+                    for (let i=0; i<response.numberOfChannels; i++) {
+                        console.log(response.getChannelData(i))
+                    }
+                })
+                .then(() => 
+                fetch('gm.ogg')
+                .then(response => response.arrayBuffer())
+                .then(response => {
+                    console.log(response)
+                    console.time("Wasm")
+                    const size = response.byteLength
+                    const buffer = Module._malloc(size)
+                    const view = new Int8Array(response)
+                    Module.HEAP8.set(view, buffer)
+                    const retval = Module.ccall('open_buffer', 'number', ['number', 'number'], [buffer, size])
+                    const length = Module.ccall('get_length')
+                    const channels = Module.ccall('get_channels')
+                    const rate = Module.ccall('get_rate')
+                    const time = Module.ccall('get_time')
+                    console.log(channels, length)
+                    const outBuffer = Module._malloc(channels * length * 4)
+                    console.log(outBuffer)
+                    Module.ccall('decode_buffer', 'number', ['number'], [outBuffer]);
+                    console.log(outBuffer);
+                    resultViews = [];
+                    var audioBuffer = audioCtx.createBuffer(channels, length, rate);
+
+                    for (let i=0; i<channels; i++) {
+                        const buf = new Float32Array(Module.HEAPF32.buffer, outBuffer + i * length * 4, length)
+                        audioBuffer.copyToChannel(buf, i);
+                    }
+                    var source = audioCtx.createBufferSource();
+                    source.buffer = audioBuffer;
+                    console.timeEnd("Wasm")
+
+                    source.connect(audioCtx.destination);
+                    source.start()
+                    // const resultView = new Float32Array(Module.HEAPF32.buffer, outBuffer, channels * length);
+                    // const result = new Uint8Array(resultView);
+                    console.log(resultViews);
+                }))
+            }
+            
+        };
+    </script>
+    <script src=decode.js></script>
+
+</body>
+
+</html>
