@@ -1,11 +1,8 @@
-// https://github.com/simontime/VGMPlayerNX/blob/388c2ee45b79534f329ed91bde16681102e3ebcd/source/vgmstream/coding/ogg_vorbis_decoder.c#L79
-
 #include <vorbis/vorbisfile.h>
+#include <stdlib.h>
 
 OggVorbis_File vf;
-// int buffers[];
-
-// int add_buffer()
+int bitstream = 0;
 
 int open_buffer(void *inbuf, int size)
 {
@@ -36,32 +33,37 @@ float get_time()
 // Maybe this opening part should be done in javascript land
 // (although maybe try to do everything in js land?)
 
+int read_float(float ***outbuf) {
+  float **pcm;
+  int ret = ov_read_float(&vf, &pcm, 4096, &bitstream);
+  // printf("%i\n", &pcm[0][0] );
+  // printf("%i\n", pcm[1] );
+  // printf("%i\n", *pcm );
+  // printf("%f\n", **pcm );
+  *outbuf = pcm;
+  return ret;
+}
+
+// see what's going on before that last commit
 int decode_buffer(float outbuf[])
 {
   float **pcm;
   int bitstream = 0;
-  int total = 0;
   int length = get_length();
   int channels = ov_info(&vf, 0)->channels;
   int streams = ov_streams(&vf);
-
-  float val;
   int ret, i, j;
   int index = 0;
-  while ((ret = ov_read_float(&vf, &pcm, 93000, &bitstream)) != 0)
+  while ((ret = ov_read_float(&vf, &pcm, 4800, &bitstream)) != 0)
   {
     for (i = 0; i < channels; i++)
     {
       for (j = 0; j < ret; j++)
       {
         outbuf[index + i * length + j] = pcm[i][j];
-        // if (j>500 && j<600) {
-        //   printf("%.20f\n", pcm[i][j]);
-        // }
       }
     }
     index += ret;
   }
-
   return 0;
 }

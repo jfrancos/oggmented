@@ -15,73 +15,125 @@
                     __memory_base: 0
                 }
             }
-            WebAssembly.instantiateStreaming(fetch("oggdec.wasm"),importObject)
+            WebAssembly.instantiateStreaming(fetch("decode.wasm"),importObject)
             .then(result => {
-                const value = result.instance.exports.decode_buffer()
+                // const value = result.instance.exports.decode_buffer()
+                // console.log(result.instance._malloc);
                 // console.log(result.instance.exports.allocateF32Array(23423))
                 // const pointer = result.instance.exports.allocateUInt
-                fetch('BackupAndPush.ogg')
-                .then(response => response.arrayBuffer())
-                .then(response => {
-                    console.log(response)
-                })
-                console.log(value)
+                // fetch('BackupAndPush.ogg')
+                // .then(response => response.arrayBuffer())
+                // .then(response => {
+                //     console.log(response)
+                // })
+                // console.log(value)
             })
         </script> -->
     <script>
         var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         var Module = {
             onRuntimeInitialized: function () {
-                console.log(Module)
-                fetch('gm.ogg')
-                .then(response => response.arrayBuffer())
-                .then(response => { console.time("Native"); return audioCtx.decodeAudioData(response)})
-                .then(response => {
-                    console.timeEnd("Native")
-                    console.log(response)
-                    for (let i=0; i<response.numberOfChannels; i++) {
-                        console.log(response.getChannelData(i))
-                    }
-                })
-                .then(() => 
-                fetch('gm.ogg')
-                .then(response => response.arrayBuffer())
-                .then(response => {
-                    console.log(response)
-                    console.time("Wasm")
-                    const size = response.byteLength
+                openBuffer = (inbuffer) => {
+                    const size = inbuffer.byteLength
                     const buffer = Module._malloc(size)
-                    const view = new Int8Array(response)
-                    Module.HEAP8.set(view, buffer)
-                    const retval = Module.ccall('open_buffer', 'number', ['number', 'number'], [buffer, size])
-                    const length = Module.ccall('get_length')
-                    const channels = Module.ccall('get_channels')
-                    const rate = Module.ccall('get_rate')
-                    const time = Module.ccall('get_time')
-                    console.log(channels, length)
+                    const bufferView = new Int8Array(inbuffer)
+                    Module.HEAP8.set(bufferView, buffer)
+                    Module.ccall('open_buffer', 'number', ['number', 'number'], [buffer, size])
+                    return {
+                        length: Module.ccall('get_length'),
+                        channels: Module.ccall('get_channels'),
+                        rate: Module.ccall('get_rate')
+                    }
+                }
+                decode = (buffer) => {
+                    const info = openBuffer(buffer)
+                    const length = info.length
+                    const channels = info.channels
+                    const rate = info.rate
                     const outBuffer = Module._malloc(channels * length * 4)
-                    console.log(outBuffer)
-                    Module.ccall('decode_buffer', 'number', ['number'], [outBuffer]);
-                    console.log(outBuffer);
-                    resultViews = [];
                     var audioBuffer = audioCtx.createBuffer(channels, length, rate);
+                    const pointer = Module._malloc(4)
 
-                    for (let i=0; i<channels; i++) {
-                        const buf = new Float32Array(Module.HEAPF32.buffer, outBuffer + i * length * 4, length)
-                        audioBuffer.copyToChannel(buf, i);
+                    // ret = Module.ccall('read_float', 'number', ['number'], [pointer])
+                    // const buf = new Uint32Array(Module.HEAP32.buffer, pointer, 1)[0]
+                    // const array = new Uint32Array(Module.HEAP32.buffer, buf, channels)
+                    // console.log(array)
+                    let index = 0;
+                    while (ret = Module.ccall('read_float', 'number', ['number'], [pointer])) {
+                        const buf = new Uint32Array(Module.HEAP32.buffer, pointer, 1)[0]
+                        const array = new Uint32Array(Module.HEAP32.buffer, buf, channels)
+                        for (let i = 0; i < channels; i++) {
+                            const buf = new Float32Array(Module.HEAPF32.buffer, array[i], ret)
+                            audioBuffer.copyToChannel(buf, i, index);
+                        }
+                        index += ret
                     }
                     var source = audioCtx.createBufferSource();
                     source.buffer = audioBuffer;
-                    console.timeEnd("Wasm")
+                    console.log("done")
 
                     source.connect(audioCtx.destination);
-                    source.start()
-                    // const resultView = new Float32Array(Module.HEAPF32.buffer, outBuffer, channels * length);
-                    // const result = new Uint8Array(resultView);
-                    console.log(resultViews);
-                }))
+                    source.start();
+                }
+                console.log(Module)
+                fetch('gm.ogg')
+                    .then(response => response.arrayBuffer())
+                    .then(response => { console.time("Native"); return audioCtx.decodeAudioData(response) })
+                    .then(response => {
+                        console.timeEnd("Native")
+                        console.log(response)
+                        for (let i = 0; i < response.numberOfChannels; i++) {
+                            console.log(response.getChannelData(i))
+                        }
+                    })
+                    .then(() =>
+                        fetch('gm.ogg')
+                            .then(response => response.arrayBuffer())
+                            .then(response => {
+                                console.log(response)
+                                console.time("Wasm")
+                                const size = response.byteLength
+                                const buffer = Module._malloc(size)
+                                const view = new Int8Array(response)
+                                Module.HEAP8.set(view, buffer)
+                                const retval = Module.ccall('open_buffer', 'number', ['number', 'number'], [buffer, size])
+                                const length = Module.ccall('get_length')
+                                const channels = Module.ccall('get_channels')
+                                const rate = Module.ccall('get_rate')
+                                const outBuffer = Module._malloc(channels * length * 4)
+                                Module.ccall('decode_buffer', 'number', ['number'], [outBuffer]);
+                                resultViews = [];
+                                console.log('creating buffer')
+                                var audioBuffer = audioCtx.createBuffer(channels, length, rate);
+                                console.log("copying to chanels")
+                                for (let i = 0; i < channels; i++) {
+                                    const buf = new Float32Array(Module.HEAPF32.buffer, outBuffer + i * length * 4, length)
+                                    audioBuffer.copyToChannel(buf, i);
+                                }
+                                console.log("setting up buffersource")
+                                // var source = audioCtx.createBufferSource();
+                                // source.buffer = audioBuffer;
+                                // console.log("done")
+
+                                // source.connect(audioCtx.destination);
+                                console.timeEnd("Wasm")
+
+                                // source.start()
+                                // const resultView = new Float32Array(Module.HEAPF32.buffer, outBuffer, channels * length);
+                                // const result = new Uint8Array(resultView);
+                                console.time("take2")
+                                // const audioBuffer2 = audioCtx.createBuffer(channels, length, rate);
+                                // const genbuffer = Module._malloc(200000)
+
+                                // while (ret = Module.ccall('read_float', 'number', ['number', 'number'], [genbuffer, 50000])) {
+                                // console.log(ret);
+                                // }
+                                decode(response)
+                                console.timeEnd("take2")
+                                console.log(resultViews);
+                            }))
             }
-            
+
         };
     </script>
     <script src=decode.js></script>
