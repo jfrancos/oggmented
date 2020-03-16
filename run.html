@@ -6,10 +6,10 @@
 </head>
 
 <body>
-    HTML page I created for my WebAssembly module.
-
+    HTML page I created for my WebAssembly moduule.
     <script>
-        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        var audioCtx = new (window.AudioContext || window.webkitAudioContext)({sampleRate: 44100});//{sampleRate: 48000}
+        console.log(audioCtx)
         var Module = {
             onRuntimeInitialized: function () {
                 openBuffer = (inbuffer) => {
@@ -19,9 +19,9 @@
                     Module.HEAP8.set(bufferView, buffer)
                     Module.ccall('open_buffer', 'number', ['number', 'number'], [buffer, size])
                     return {
-                        length: Module.ccall('get_length'),
-                        channels: Module.ccall('get_channels'),
-                        rate: Module.ccall('get_rate')
+                        length: Module._get_length(),
+                        channels: Module._get_channels(),
+                        rate: Module._get_rate()
                     }
                 }
                 decode = (buffer) => {
@@ -29,56 +29,66 @@
                     const length = info.length
                     const channels = info.channels
                     const rate = info.rate
-                    const outBuffer = Module._malloc(channels * length * 4)
-                    var audioBuffer = audioCtx.createBuffer(channels, length, rate);
-                    const pointer = Module._malloc(4)
+                    const audioBuffer = audioCtx.createBuffer(channels, length, rate);
+                    const ppp_pcm = Module._malloc(Uint32Array.BYTES_PER_ELEMENT)
                     let index = 0;
-                    let ret = 0;
-                    // let time;
                     block = () => {
-                        let time = Date.now()
-                        while (ret = Module.ccall('read_float', 'number', ['number'], [pointer])) {
-                            const buf = new Uint32Array(Module.HEAP32.buffer, pointer, 1)[0]
-                            const array = new Uint32Array(Module.HEAP32.buffer, buf, channels)
-                            for (let i = 0; i < channels; i++) {
-                                const buf = new Float32Array(Module.HEAPF32.buffer, array[i], ret)
-                                audioBuffer.copyToChannel(buf, i, index);
+                        const time = Date.now()
+                        let samplesRead = 0;
+                        while (samplesRead = Module._read_float(ppp_pcm)) {
+                            const pp_pcm = Module.getValue(ppp_pcm, '*')
+                            const pp_pcm_view = new Uint32Array(Module.HEAP32.buffer, pp_pcm, channels)
+                            for (let channel = 0; channel < channels; channel++) {
+                                const p_pcm = pp_pcm_view[channel]
+                                const p_pcm_view = new Float32Array(Module.HEAPF32.buffer, p_pcm, samplesRead)
+                                audioBuffer.copyToChannel(p_pcm_view, channel, index);
                             }
-                            index += ret
+                            index += samplesRead
                             if (time + 10 < Date.now()) {
-                                setImmediate(block, 0)
+                                window.setImmediate(block)
                                 break
                             }
                         }
-                        if (ret === 0){
-                            console.log("hello")
+                        if (samplesRead === 0) {
                             console.timeEnd("take2")
+                            for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
+                            console.log(audioBuffer.getChannelData(i)) //[12000000]
+                        }
                         }
                     }
                     block()
                     var source = audioCtx.createBufferSource();
+                    console.log(audioBuffer)
                     source.buffer = audioBuffer;
 
                     source.connect(audioCtx.destination);
                     source.start();
-                }
+                }//3.1239882208877745e-11 1.884228537085697e-11 3.12398926172186e-11 1.884228537085697e-11
                 console.log(Module)
                 fetch('gm.ogg')
                     .then(response => response.arrayBuffer())
                     .then(response => { console.time("Native"); return audioCtx.decodeAudioData(response) })
                     .then(response => {
                         console.timeEnd("Native")
+                        var source = audioCtx.createBufferSource();
+                        source.buffer = response;
+
+                        source.connect(audioCtx.destination);
+                        // source.start();
                         console.log(response)
                         for (let i = 0; i < response.numberOfChannels; i++) {
-                            console.log(response.getChannelData(i))
+                            console.log(response.getChannelData(i)) //[12000000]
                         }
                     })
                     .then(() =>
                         fetch('gm.ogg')
                             .then(response => response.arrayBuffer())
                             .then(response => {
+                                console.log(response)
                                 console.time("take2")
+
                                 decode(response)
+                                // console.timeEnd("take2")
                             }))
             }
 

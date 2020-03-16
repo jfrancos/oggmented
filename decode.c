@@ -1,5 +1,4 @@
 #include <vorbis/vorbisfile.h>
-// #include <stdlib.h>
 
 OggVorbis_File vf;
 int bitstream = 0;
@@ -7,7 +6,7 @@ float **pcm;
 
 int open_buffer(void *inbuf, int size)
 {
-  FILE *stream = fmemopen(inbuf, size, "r,b");
+  FILE *stream = fmemopen(inbuf, size, "r");
   return ov_open(stream, &vf, NULL, 0);
 }
 
