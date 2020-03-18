@@ -42,6 +42,7 @@ Module['audioBufferFromOggBuffer'] = buffer => {
     }
     const info = openBuffer(buffer)
     // const { length, channels, rate } = info
+    // console.log(length)
     const channels = info.channels
     const length = info.length
     const rate = info.rate

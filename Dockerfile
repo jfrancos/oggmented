@@ -1,11 +1,11 @@
-FROM python:3
+FROM node:12.16.1-buster
 
-RUN apt-get update && apt-get install -y powerline fonts-powerline zsh time less && apt-get clean
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# RUN apt-get update && apt-get install -y powerline fonts-powerline zsh time less && apt-get clean
+# RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 # RUN sed -i 's/plugins=\(.*\)/plugins=(git-prompt)/' /root/.zshrc
-RUN echo disable -r time >> /root/.zshrc
-RUN echo 'alias time="time -p "' >> /root/.zshrc
-ENTRYPOINT cd /docker_*  git --no-pager diff ; zsh
+# RUN echo disable -r time >> /root/.zshrc
+# RUN echo 'alias time="time -p "' >> /root/.zshrc
+ENTRYPOINT cd /docker_*  git --no-pager diff ; bash
 
 RUN git clone https://github.com/emscripten-core/emsdk.git
 WORKDIR /emsdk
@@ -14,9 +14,9 @@ RUN ./emsdk install 1.39.10
 RUN ./emsdk activate 1.39.10
 RUN apt-get update
 RUN apt-get install -y default-jre cmake
-RUN echo source /emsdk/emsdk_env.sh >> ~/.zshrc
-RUN /emsdk/upstream/emscripten/embuilder.py build libcompiler_rt libc-wasm libdlmalloc libpthread_stub libc_rt_wasm libsockets
-RUN /emsdk/upstream/emscripten/embuilder.py build struct_info --pic
+# RUN echo source /emsdk/emsdk_env.sh >> ~/.zshrc
+# RUN /emsdk/upstream/emscripten/embuilder.py build libcompiler_rt libc-wasm libdlmalloc libpthread_stub libc_rt_wasm libsockets
+# RUN /emsdk/upstream/emscripten/embuilder.py build struct_info --pic
 
 ENV PREFIX /local
 
