@@ -1,11 +1,13 @@
 
 decode.js: decode.c Makefile pre.js
 	EMCC_CLOSURE_ARGS="--language_in ECMASCRIPT6" \
-	emcc -I/local/include decode.c -o src/decode.js \
+	emcc -I/local/include decode.c -o decode.js \
 	--pre-js pre.js \
 	-s MODULARIZE=1 \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s ENVIRONMENT=web \
+	-s STRICT=1 \
+	-s SINGLE_FILE=1 \
 	-s EXPORTED_FUNCTIONS="[ \
 		'_open_buffer', \
 		'_malloc', \
@@ -19,8 +21,8 @@ decode.js: decode.c Makefile pre.js
 	]" \
 	-s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall', 'getValue']" \
 	 -O3 \
-	-llibvorbisfile -llibvorbis -llibogg -L/local/lib \
-	&& mv src/decode.wasm dist/
+	-llibvorbisfile -llibvorbis -llibogg -L/local/lib
+	# && mv src/decode.wasm dist/
 
 
 

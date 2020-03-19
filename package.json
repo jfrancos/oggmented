@@ -1,7 +1,7 @@
 {
-  "name": "docker_decode_buffer",
+  "name": "oggmented",
   "version": "1.0.0",
-  "main": "a.out.js",
+  "main": "oggmented.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,9 +19,6 @@
   "dependencies": {
     "setimmediate": "^1.0.5"
   },
-  "devDependencies": {
-    "webpack": "^4.42.0",
-    "webpack-cli": "^3.3.11"
-  },
+  "devDependencies": {},
   "description": ""
 }
