@@ -1,4 +1,4 @@
-require("setImmediate")
+require("setimmediate")
 // decodeModule = './decode.wasm'
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
