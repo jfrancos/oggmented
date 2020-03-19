@@ -1,20 +1,7 @@
 require ("setimmediate")
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 Module['audioBufferFromOggBuffer'] = (buffer, callback) => {
-    const {
-        HEAPF32,
-        HEAPU32,
-        HEAP8,
-        ccall,
-        getValue,
-        _malloc,
-        _get_length,
-        _get_channels,
-        _get_rate,
-        _read_float
-    } = Module
     const openBuffer = (inbuffer) => {
         const size = inbuffer.byteLength
         const buffer = _malloc(size)
@@ -33,7 +20,7 @@ Module['audioBufferFromOggBuffer'] = (buffer, callback) => {
     let index = 0;
     const block = () => {
         const time = Date.now()
-        let samplesRead = 0;
+        let samplesRead;
         while (samplesRead = _read_float(ppp_pcm)) {
             const pp_pcm = getValue(ppp_pcm, '*')
             const pp_pcm_view = new Uint32Array(HEAPU32.buffer, pp_pcm, channels)

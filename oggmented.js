@@ -8,6 +8,7 @@ export default class oggmentedAudioContext extends (window.AudioContext || windo
                 const outbuffer = module.audioBufferFromOggBuffer(buffer, () => resolve(outbuffer))
             } // Defer to WebAudio if there's an error
             catch {
+                console.log("whoops")
                 super.decodeAudioData(buffer)
                     .then(decodedBuffer => resolve(decodedBuffer))
             }
