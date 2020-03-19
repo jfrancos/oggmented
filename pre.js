@@ -2,7 +2,7 @@ require ("setimmediate")
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-Module['audioBufferFromOggBuffer'] = buffer => {
+Module['audioBufferFromOggBuffer'] = (buffer, callback) => {
     const {
         HEAPF32,
         HEAPU32,
@@ -49,9 +49,7 @@ Module['audioBufferFromOggBuffer'] = buffer => {
             }
         }
         if (samplesRead === 0) {
-            for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
-                console.log(audioBuffer.getChannelData(i))
-            }
+            callback && callback()
         }
     }
     setImmediate(block)
