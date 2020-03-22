@@ -32,7 +32,7 @@ float get_time()
 
 int get_streams()
 {
-  return ov_read_float(&vf, &pcm, 4096, &bitstream);
+  return ov_streams(&vf);
 }
 
 int read_float(float ***outbuf)

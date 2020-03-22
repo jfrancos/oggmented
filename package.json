@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "oggmented.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "rm": "rm -rf node_modules decode.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,5 @@
   "dependencies": {
     "setimmediate": "^1.0.5"
   },
-  "devDependencies": {},
   "description": ""
 }
