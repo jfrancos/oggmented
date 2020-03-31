@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "vorbisfile.h": "c",
+        "stdlib.h": "c"
+    }
+}

@@ -38,7 +38,6 @@ Module['audioBufferFromOggBuffer'] = (buffer, callback) => {
                 }
             }
             if (samplesRead === 0) {
-                console.log(index)
                 callback && callback(audioBuffer)
             }
         }

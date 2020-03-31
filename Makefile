@@ -1,13 +1,18 @@
 
-decode.js: decode.c Makefile pre.js
+OGG_FILE="https://downloads.xiph.org/releases/ogg/libogg-1.3.4.tar.xz"
+VORBIS_FILE="https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.6.tar.xz"
+PREFIX=`cd ../.. && pwd`/local
+
+src/js/decode.js: src/em/decode.c Makefile src/em/pre.js local/lib
 	EMCC_CLOSURE_ARGS="--language_in ECMASCRIPT6 \
 	--process_common_js_modules \
 	--module_resolution=NODE \
 	--js node_modules/setimmediate/setImmediate.js \
 	--jscomp_off=checkVars \
 	--js node_modules/setimmediate/package.json" \
-	emcc -I/local/include decode.c -o decode.js \
-	--pre-js pre.js \
+	emsdk/upstream/emscripten/emcc -Ilocal/include src/em/decode.c -o src/js/decode.js \
+	--pre-js src/em/pre.js \
+	-O3 --closure 1 \
 	-s MODULARIZE=1 \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s ENVIRONMENT=web \
@@ -24,22 +29,31 @@ decode.js: decode.c Makefile pre.js
 		'_get_time', \
 		'_get_streams' \
 	]" \
-	-O3 --closure 1 \
 	-s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall', 'getValue']" \
-	-llibvorbisfile -llibvorbis -llibogg -L/local/lib
-	# && mv src/decode.wasm dist/
-# var MODULARIZE_INSTANCE = 0;
+	-llibvorbisfile -llibvorbis -llibogg -Llocal/lib
 
- 
-	# -s EXPORT_ES6=1 \
+emsdk:
+	git clone https://github.com/emscripten-core/emsdk.git
+	cd emsdk && git pull
+	cd emsdk && ./emsdk install 1.39.10
+	cd emsdk && ./emsdk activate 1.39.10
 
-	# EMCC_CLOSURE_ARGS="--language_in ECMASCRIPT6" \
-	# -O3 --closure 1 \
-		# '_malloc', \
-		# '_read_float', \
-		# '_open_buffer', \
-		# '_get_length', \
-		# '_get_channels', \
-		# '_get_rate', \
-		# '_get_time', \
-		# '_get_streams' \
+build:
+	mkdir build
+
+local/lib: emsdk build
+	curl -L ${OGG_FILE} | tar xJC build
+	cd build/libogg* \
+		&& ../../emsdk/upstream/emscripten/emconfigure ./configure --disable-shared --prefix=${PREFIX} \
+		&& ../../emsdk/upstream/emscripten/emmake make install
+	curl -L ${VORBIS_FILE} | tar xJC build
+	cd build/libvorbis* \
+		&& ../../emsdk/upstream/emscripten/emconfigure ./configure --disable-shared --prefix=${PREFIX} \
+		&& ../../emsdk/upstream/emscripten/emmake make install
+
+clean:
+	rm -rf emsdk build local src/js/decode.js
+
+	# var MODULARIZE_INSTANCE = 0; 
+	# -s EXPORT_ES6=1
+

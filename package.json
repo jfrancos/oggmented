@@ -1,24 +1,51 @@
 {
   "name": "oggmented",
   "version": "1.0.0",
-  "main": "oggmented.js",
+  "main": "dist/oggmented-bundle.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "rm": "rm -rf node_modules decode.js"
+    "test": "karma start --single-run --browsers ChromeHeadless karma.conf.js ",
+    "rm": "rm -rf node_modules decode.js",
+    "build": "make && webpack"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jfrancos/decode_oggbuffer.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Justin Francos",
+  "license": "GPL",
   "bugs": {
     "url": "https://github.com/jfrancos/decode_oggbuffer/issues"
   },
   "homepage": "https://github.com/jfrancos/decode_oggbuffer#readme",
   "dependencies": {
+    "@types/emscripten": "^1.39.3",
     "setimmediate": "^1.0.5"
   },
-  "description": ""
+  "description": "Drop-in replacement for AudioContext. Overrides decodeAudioData and provides Ogg Vorbis decoding, calling super.decodeAudioData for non-vorbis.",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/register": "^7.9.0",
+    "@webpack-cli/init": "^0.3.0",
+    "babel-loader": "^8.1.0",
+    "chai": "^4.2.0",
+    "karma": "^4.4.1",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-firefox-launcher": "^1.3.0",
+    "karma-mocha": "^1.3.0",
+    "karma-opera-launcher": "^1.0.0",
+    "karma-safari-launcher": "^1.0.0",
+    "karma-webpack": "^4.0.2",
+    "mocha": "^7.1.1",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  }
 }
