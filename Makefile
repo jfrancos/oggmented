@@ -34,9 +34,10 @@ src/js/decode.js: src/em/decode.c Makefile src/em/pre.js local/lib
 
 emsdk:
 	git clone https://github.com/emscripten-core/emsdk.git
-	cd emsdk && git pull
-	cd emsdk && ./emsdk install 1.39.10
-	cd emsdk && ./emsdk activate 1.39.10
+	cd emsdk \
+		&& git pull \
+		&& ./emsdk install 1.39.10 \
+		&& ./emsdk activate 1.39.10
 
 build:
 	mkdir build
