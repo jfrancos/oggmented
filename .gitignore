@@ -2,3 +2,4 @@ node_modules
 build
 local
 emsdk
+.DS_Store
