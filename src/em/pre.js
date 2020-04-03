@@ -41,6 +41,9 @@ Module['decodeOggData'] = (buffer, callback) => {
             }
         }
         if (samplesRead === 0) {
+            _close_buffer()
+            _free(buffer)
+            _free(ppp_pcm)
             callback && callback(audioBuffer)
         }
     }

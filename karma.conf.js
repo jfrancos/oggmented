@@ -11,6 +11,8 @@ module.exports = (config) => {
       {pattern: 'test/test.js', included: true, watched: false, nocache: false }, // is it weird that tests fail with nocache:true?
       // {pattern: 'test/index.html', watched: false},
       {pattern: 'dist/*.js', included: false, watched: false, served:false, nocache: true},
+      {pattern: 'dist/silence.*', included: false, watched: false, served:true},
+
       // each file acts as entry point for the webpack configuration
     ],
     browsers: ['Safari', 'ChromeHeadless', 'Firefox'],// , 'Opera', 'Chrome', 'ChromeCanary'],'Safari', //'ChromeHeadless', 

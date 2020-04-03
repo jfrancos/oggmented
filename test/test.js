@@ -1,12 +1,15 @@
 import oac from '../dist/oggmented-bundle'
 import chai from 'chai'
+import Bowser from "bowser"
 const expect = chai.expect;
 
 const audioCtx = new oac()
 describe('Using oggmented audio context', function () {
     describe('Decoding silence.wav', function () {
         let response, fileBuffer, buffer
+        const browser = Bowser.getParser(window.navigator.userAgent);
 
+        audioCtx.nativeVorbisLevel().then(level => console.log(browser.getBrowserName(), level))
         before(async () => {
             response = await fetch('base/test/silence.wav')
             fileBuffer = await response.arrayBuffer()

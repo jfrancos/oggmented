@@ -19,10 +19,9 @@ src/js/decode.js: src/em/decode.c Makefile src/em/pre.js local/lib
 	-s STRICT=1 \
 	-s SINGLE_FILE=1 \
 	-s EXPORTED_FUNCTIONS="[ \
-		'_open_buffer', \
-		'_malloc', \
 		'_read_float', \
 		'_open_buffer', \
+		'_close_buffer', \
 		'_get_length', \
 		'_get_channels', \
 		'_get_rate', \
