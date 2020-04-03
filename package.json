@@ -15,7 +15,7 @@
       "src/em/",
       "Makefile"
     ],
-    "exec": "CFLAGS='-O1' make -e"
+    "exec": "CFLAGS='-O1' make"
   },
   "babel": {
     "presets": [

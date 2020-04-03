@@ -11,8 +11,8 @@ src/js/decode.js: src/em/decode.c Makefile src/em/pre.js local/lib
 	--js node_modules/setimmediate/setImmediate.js \
 	--jscomp_off=checkVars \
 	--js node_modules/setimmediate/package.json" \
-	emsdk/upstream/emscripten/emcc -Ilocal/include src/em/decode.c -o src/js/decode.js \
-	--post-js src/em/pre.js ${CFLAGS} \
+	emsdk/upstream/emscripten/emcc -Ilocal/include src/em/decode.c -o src/js/oggmented-wasm.js \
+	--pre-js src/em/pre.js ${CFLAGS} \
 	-s MODULARIZE=1 \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s ENVIRONMENT=web \

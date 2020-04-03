@@ -1,5 +1,4 @@
-import Module from './decode.js'
-const module = Module()
+import Module from './oggmented-wasm.js'
 
 export class OggmentedAudioContext extends (window.AudioContext || window.webkitAudioContext) {
     // need the setPrototypeOf due to this issue:
@@ -10,11 +9,11 @@ export class OggmentedAudioContext extends (window.AudioContext || window.webkit
     }
     decodeAudioData(buffer, callback) {
         const decode = resolve => {
-            module.then(Module => {
+            Module().then(oggmented => {
                 try {
-                    Module.audioBufferFromOggBuffer(buffer, resolve)
-                } // Defer to WebAudio if there's an error
-                catch {
+                    oggmented.decodeOggData(buffer, resolve)
+                }
+                catch { // Defer to native AudioContext on error
                     super.decodeAudioData(buffer, resolve)
                 }
             })
@@ -27,7 +26,7 @@ export class OggmentedAudioContext extends (window.AudioContext || window.webkit
     }
 
     decodeAudioDataSync(buffer) {
-        return Module.audioBufferFromOggBuffer(buffer)
+        return oggmented.decodeOggData(buffer)
     }
 }
 

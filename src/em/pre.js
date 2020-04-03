@@ -1,7 +1,7 @@
 require("setimmediate")
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-Module['audioBufferFromOggBuffer'] = (buffer, callback) => {
+Module['decodeOggData'] = (buffer, callback) => {
     const openBuffer = (inbuffer) => {
         const size = inbuffer.byteLength
         const buffer = _malloc(size)
