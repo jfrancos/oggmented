@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="../dist/oggmented-bundle.js"></script>
+    <script>
+        // console.log("in browser")
+        // console.log(describe === undefined)
+        const audioCtx = new oggmented.OggmentedAudioContext()
+        const test = async () => {
+            // response = await fetch('base/test/silence.ogg')
+            response = await fetch('silence.ogg')
+            fileBuffer = await response.arrayBuffer()
+            const audioBuffer = await audioCtx.decodeAudioData(fileBuffer)
+            if (audioBuffer.length !== 1 || audioBuffer.getChannelData(0)[0] !== 0) {
+                throw ('Unable to run inside <script/>')
+            } else if (!window.describe) {
+                alert('works!')
+            }
+        }
+        if (window.describe === undefined) {
+            test()
+        } else {
+            describe('Sanity check html usage', () => {
+                let response, fileBuffer
+
+                it('should return correct audioBufferk', async () => {
+                    // gave up on getting expect to work here
+                    await test()
+                })
+            })
+        }
+    </script>
+</body>
+
+</html>

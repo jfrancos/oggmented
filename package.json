@@ -3,15 +3,26 @@
   "version": "1.0.0",
   "main": "dist/oggmented-bundle.js",
   "scripts": {
-    "test": "karma start --single-run --browsers ChromeHeadless karma.conf.js ",
+    "test": "karma start",
     "rm": "rm -rf node_modules decode.js",
-    "build": "make && webpack"
+    "build": "make && webpack",
+    "webpack-watch": "webpack --watch",
+    "make-watch": "nodemon",
+    "start": "nodemon & webpack --watch & karma start"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src/em/",
+      "Makefile"
+    ],
+    "exec": "CFLAGS='-O1' make -e"
   },
   "babel": {
     "presets": [
       "@babel/preset-env"
     ]
   },
+  "browserslist": "> 0.25%, not dead",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jfrancos/decode_oggbuffer.git"
@@ -24,6 +35,7 @@
   },
   "homepage": "https://github.com/jfrancos/decode_oggbuffer#readme",
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.9.0",
     "@types/emscripten": "^1.39.3",
     "setimmediate": "^1.0.5"
   },
@@ -45,6 +57,7 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-webpack": "^4.0.2",
     "mocha": "^7.1.1",
+    "nodemon": "^2.0.2",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   }

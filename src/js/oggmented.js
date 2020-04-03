@@ -1,5 +1,5 @@
 import Module from './decode.js'
-const oggModule = Module()
+const module = Module()
 
 export class OggmentedAudioContext extends (window.AudioContext || window.webkitAudioContext) {
     // need the setPrototypeOf due to this issue:
@@ -10,13 +10,14 @@ export class OggmentedAudioContext extends (window.AudioContext || window.webkit
     }
     decodeAudioData(buffer, callback) {
         const decode = resolve => {
-            try {
-                oggModule.audioBufferFromOggBuffer(buffer, resolve)
-            } // Defer to WebAudio if there's an error
-            catch { // broken until this works with webpack
-                // const decodedBuffer = await super.decodeAudioData(buffer)
-                // resolve(decodedBuffer)
-            }
+            module.then(Module => {
+                try {
+                    Module.audioBufferFromOggBuffer(buffer, resolve)
+                } // Defer to WebAudio if there's an error
+                catch {
+                    super.decodeAudioData(buffer, resolve)
+                }
+            })
         }
         if (callback) {
             decode(callback)
@@ -26,7 +27,7 @@ export class OggmentedAudioContext extends (window.AudioContext || window.webkit
     }
 
     decodeAudioDataSync(buffer) {
-        return oggModule.audioBufferFromOggBuffer(buffer)
+        return Module.audioBufferFromOggBuffer(buffer)
     }
 }
 

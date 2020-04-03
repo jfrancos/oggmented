@@ -24,6 +24,7 @@ module.exports = {
     library: 'oggmented',
     libraryTarget: 'umd'
   },
+  watch: true
   // devServer: {
   //   contentBase: './dist'
   // }

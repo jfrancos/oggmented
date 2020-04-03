@@ -1,21 +1,25 @@
 // Karma configuration
 // Generated on Sun Mar 29 2020 22:46:15 GMT+0000 (Coordinated Universal Time)
 
+
 module.exports = (config) => {
   config.set({
     // ... normal karma configuration
+    basePath: './',
     files: [
-      // all files ending in "_test"
-      {pattern: 'test/silence.ogg', included: false, watched: false, served:true},
-      { pattern: 'test/*test.js', watched: false },
-      { pattern: 'test/**/*test.js', watched: false },
+      {pattern: 'test/silence.*', included: false, watched: false, served:true},
+      {pattern: 'test/test.js', included: true, watched: false, nocache: false }, // is it weird that tests fail with nocache:true?
+      // {pattern: 'test/index.html', watched: false},
+      {pattern: 'dist/*.js', included: false, watched: false, served:false, nocache: true},
       // each file acts as entry point for the webpack configuration
     ],
+    browsers: ['Safari', 'ChromeHeadless', 'Firefox'],// , 'Opera', 'Chrome', 'ChromeCanary'],'Safari', //'ChromeHeadless', 
+    reporters: ['progress'],
 
     preprocessors: {
       // add webpack as preprocessor
       'test/*test.js': ['webpack'],
-      'test/**/*test.js': ['webpack'],
+      // 'test/**/*test.js': ['webpack'],
     },
     frameworks: ['mocha'],
     webpack: {
@@ -28,7 +32,7 @@ module.exports = (config) => {
     webpackMiddleware: {
       // webpack-dev-middleware configuration
       // i. e.
-      stats: 'errors-only',
+      // stats: 'errors-only',
     },
   });
 };
