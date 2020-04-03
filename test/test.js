@@ -3,13 +3,23 @@ import chai from 'chai'
 import Bowser from "bowser"
 const expect = chai.expect;
 
+const engines = {
+    'gecko': ['Firefox'],           // Correctly decodes ogg/vorbis
+    'blink': ['Chrome', 'Opera'],   // Mostly correctly decodes ogg/vorbis
+    'webkit': ['Safari']            // Does not decode ogg/vorbis
+}
+
 const audioCtx = new oac()
 describe('Using oggmented audio context', function () {
+    it('should correctly guess browser engine based on ogg decoding capabilities', async function () {
+        const browser = Bowser.getParser(window.navigator.userAgent);
+        const level = await audioCtx.nativeVorbisLevel()
+        expect(engines[level]).to.include(browser.getBrowserName())
+    })
+
     describe('Decoding silence.wav', function () {
         let response, fileBuffer, buffer
-        const browser = Bowser.getParser(window.navigator.userAgent);
 
-        audioCtx.nativeVorbisLevel().then(level => console.log(browser.getBrowserName(), level))
         before(async () => {
             response = await fetch('base/test/silence.wav')
             fileBuffer = await response.arrayBuffer()

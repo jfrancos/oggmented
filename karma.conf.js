@@ -15,7 +15,7 @@ module.exports = (config) => {
 
       // each file acts as entry point for the webpack configuration
     ],
-    browsers: ['Safari', 'ChromeHeadless', 'Firefox'],// , 'Opera', 'Chrome', 'ChromeCanary'],'Safari', //'ChromeHeadless', 
+    browsers: ['Safari', 'ChromeHeadless', 'Firefox', 'Opera', 'ChromeCanary'],
     reporters: ['progress'],
 
     preprocessors: {
