@@ -35,8 +35,6 @@
   },
   "homepage": "https://github.com/jfrancos/decode_oggbuffer#readme",
   "dependencies": {
-    "@babel/plugin-transform-runtime": "^7.9.0",
-    "@types/emscripten": "^1.39.3",
     "setimmediate": "^1.0.5"
   },
   "description": "Drop-in replacement for AudioContext. Overrides decodeAudioData and provides Ogg Vorbis decoding, calling super.decodeAudioData for non-vorbis.",
@@ -44,8 +42,7 @@
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
-    "@babel/register": "^7.9.0",
-    "@webpack-cli/init": "^0.3.0",
+    "@types/emscripten": "^1.39.3",
     "babel-loader": "^8.1.0",
     "bowser": "^2.9.0",
     "chai": "^4.2.0",
@@ -59,6 +56,7 @@
     "karma-webpack": "^4.0.2",
     "mocha": "^7.1.1",
     "nodemon": "^2.0.2",
+    "url-loader": "^4.0.0",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   }

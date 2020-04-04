@@ -11,6 +11,14 @@ module.exports = {
           //   presets: ['@babel/preset-env']
           // }
         }
+      },
+      {
+        test: /\.(ogg)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+          },
+        ],
       }
     ]
   },

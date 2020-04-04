@@ -1,4 +1,5 @@
 import Module from './oggmented-wasm.js'
+import silence from './silence.ogg'
 
 export class OggmentedAudioContext extends (window.AudioContext || window.webkitAudioContext) {
     // need the setPrototypeOf due to this issue:
@@ -9,7 +10,7 @@ export class OggmentedAudioContext extends (window.AudioContext || window.webkit
     }
     nativeVorbisLevel() {
         return new Promise(resolve => { // Let's memoize this in e.g. this.vorbisLevel
-            fetch('base/test/silence.ogg')
+            fetch(silence)
                 .then(response => response.arrayBuffer())
                 .then(buffer => super.decodeAudioData(buffer)).catch(() => resolve('webkit'))
                 .then(decodedBuffer => {
