@@ -12,17 +12,11 @@ export class OggmentedAudioContext extends (window.AudioContext || window.webkit
         return new Promise(resolve => { // Let's memoize this in e.g. this.vorbisLevel
             fetch(silence)
                 .then(response => response.arrayBuffer())
-                .then(buffer => super.decodeAudioData(buffer)).catch(() => resolve('webkit'))
-                .then(decodedBuffer => {
-                    const { length, numberOfChannels } = decodedBuffer
-                    if (length === 1
-                        && numberOfChannels === 1
-                        && decodedBuffer.getChannelData(0)[0] === 0) {
-                        resolve('gecko')
-                    } else {
-                        resolve('blink')
-                    }
-                })
+                .then(buffer => super.decodeAudioData(
+                    buffer,
+                    decodedBuffer => resolve(decodedBuffer.length === 1 ? 'gecko' : 'blink'),
+                    error => resolve('webkit')
+                ))
         })
     }
     decodeAudioData(buffer, callback) {
