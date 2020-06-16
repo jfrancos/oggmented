@@ -8,14 +8,11 @@ The AudioContext in Safari and all iOS browsers doesn't support decoding ogg vor
 `npm install oggmented`
 
 # Usage
+Use it like you would regular AudioContext:
 ```
-import oggmentedAudioBuffer from 'oggmented'
-const audioCtx = new oggmentedAudioBuffer()
+import oggmentedAudioContext from 'oggmented'
 
-const response = await fetch('file.ogg')
-const buffer = await response.arrayBuffer()
-const audioBuffer = await audioCtx.decodeAudioData(buffer)
-const source = audioCtx.createBufferSource();
-source.buffer = buffer;
-source.start()
+const audioCtx = new oggmentedAudioContext()
+// instead of 
+// const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 ```
