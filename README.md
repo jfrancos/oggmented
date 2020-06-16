@@ -18,5 +18,4 @@ const audioBuffer = await audioCtx.decodeAudioData(buffer)
 const source = audioCtx.createBufferSource();
 source.buffer = buffer;
 source.start()
-
 ```
