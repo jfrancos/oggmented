@@ -27,9 +27,16 @@
     "type": "git",
     "url": "git+https://github.com/jfrancos/decode_oggbuffer.git"
   },
-  "keywords": [],
+  "keywords": [
+    "ogg",
+    "decode",
+    "vorbis",
+    "safari",
+    "decodeaudio",
+    "emscripten"
+  ],
   "author": "Justin Francos",
-  "license": "GPL",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jfrancos/decode_oggbuffer/issues"
   },
