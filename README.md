@@ -3,7 +3,7 @@ oggmented `extends` AudioContext and overrides `decodeAudioData` to use an Emscr
 
 This allows you to [`decodeAudioData`](https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData) ogg vorbis buffers correctly in any browser.  This is especially useful in Safari and iOS browsers, which don't `decodeAudioData(oggVorbisBuffer)` [at all](https://caniuse.com/#search=vorbis).
 
-In addition, [Blink](https://en.wikipedia.org/wiki/Blink_(browser_engine)) (Brave, Opera, Chrome) uses ffmpeg, which has [a bug that slightly bloats the end of decoded vorbis audio](https://trac.ffmpeg.org/ticket/6367), resulting in clicks when `audioContext.createBufferSource().loop === true`.  Using this package fixes that.
+In addition, [Blink](https://en.wikipedia.org/wiki/Blink_(browser_engine)) (Brave, Opera, Chrome) uses ffmpeg, which has [a bug that slightly bloats the end of decoded vorbis audio](https://trac.ffmpeg.org/ticket/6367), resulting in clicks when `audioContext.createBufferSource().loop === true`.  Using this package fixes that (assuming of course that the waveform begins and ends at the same place etc).
 
 
 # Installation
