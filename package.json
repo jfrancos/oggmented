@@ -1,6 +1,6 @@
 {
   "name": "oggmented",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/oggmented-bundle.js",
   "scripts": {
     "test": "karma start",
