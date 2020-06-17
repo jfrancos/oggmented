@@ -18,3 +18,7 @@ const audioCtx = new oggmentedAudioContext()
 // instead of 
 // const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 ```
+
+## License
+
+MIT © [jfrancos](https://github.com/jfrancos)
